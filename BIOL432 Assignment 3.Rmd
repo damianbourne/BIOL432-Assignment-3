@@ -1,0 +1,61 @@
+---
+title: "BIOL432 Assignment 3"
+author: "Damian C Bourne"
+date: "26/01/2021"
+output: html_document
+---
+#Project Info 
+Date: January 29 2021
+[Github Repository](https://github.com/damianbourne/BIOL432-Assignment-3.git)
+
+```{r}
+library(dplyr) #loading dplyr onto R
+library(knitr) #loading knitr into R 
+
+dat <- read.csv("~/Desktop/Queens/Academics/Undergrad/4th Year /Semester 2/BIOL432/Assignments/BIOL432-Assignment-3/InputData/FallopiaData.csv") #loading my data into R 
+
+summary(dat)
+```
+
+```{r}
+dat <- dat %>% filter(Total > 60) %>% # removing rows with a total biomass of < 60
+  select(Total, Taxon, Scenario, Nutrients) %>% # reordering the columns and removing unneeded ones 
+  mutate(TotalG = Total/1000) %>% #creating a new column 
+  select(TotalG, Taxon, Scenario, Nutrients) #replacing Total with TotalG
+
+```
+
+```{r}
+custom.function <- function(vector, string){
+  if(string == "Average"){ #if statement saying to calculate the average of the vector
+    print(mean(vector))
+  }
+  else if(string == "Sum"){
+    print(sum(vector)) #if statement to calculate the sum of the vector
+  }
+  else if(string == "Observations"){
+    print(length(vector)) #if statement to calcualte the number of values in the vector 
+  }
+  else{
+    print('Error') #if string is anything other then the three listed above, it will print error 
+  }
+}
+```
+```{r}
+custom.function(vector = dat$Taxon, string = "Observations")
+```
+There are 45 observed values in the Taxon column 
+```{r}
+dat %>% group_by(Nutrients) %>% summarise(Average = custom.function(vector = TotalG, string = "Average")) #grouping by nutrient level and then using my function to calcualte the average of TotalG
+```
+```{r}
+opts_knit$set(root.dir = "~/Desktop/Queens/Academics/Undergrad/4th Year /Semester 2/BIOL432/Assignments/BIOL432-Assignment-3/Output/")
+write.csv(dat, "WrangledData.csv")
+```
+
+
+
+
+
+
+
